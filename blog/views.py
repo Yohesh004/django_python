@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 import logging
 from .models import Post
+from django.http import Http404
 # Create your views here.
 # posts = [
 #         {'id':1,'title': 'Post1','content':'content of post1'},
@@ -20,8 +21,11 @@ def detail(request,post_id):
     # post=next((item for item in posts if item['id']==int(post_id) ),None)
     # # logger=logging.getLogger("TESTING")    
     # logger.debug(f'post variable is {post}')
-    post=Post.objects.get(pk=post_id)
-
+    try:
+        post=Post.objects.get(pk=post_id) 
+    except Post.DoesNotExist:
+        raise Http404("Post Does Not Exist")
+    
     return render(request,'detail.html',{'post':post})
 def old_url_redirect(request):
     return redirect(reverse("blog:new_url"))
